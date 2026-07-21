@@ -1,0 +1,18 @@
+{
+  "name": "qa-functional",
+  "version": "1.0.0",
+  "description": "Suite de pruebas funcionales end-to-end con Playwright + TypeScript sobre SauceDemo",
+  "scripts": {
+    "test": "playwright test",
+    "test:ui": "playwright test --ui",
+    "test:headed": "playwright test --headed",
+    "report": "playwright show-report"
+  },
+  "keywords": ["qa", "playwright", "e2e", "testing"],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "@playwright/test": "^1.61.1",
+    "typescript": "^7.0.2"
+  }
+}
