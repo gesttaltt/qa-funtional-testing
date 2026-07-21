@@ -1,0 +1,26 @@
+[
+  {
+    "name": "usuario y contraseña vacíos",
+    "username": "",
+    "password": "",
+    "expectedError": "Username is required"
+  },
+  {
+    "name": "contraseña vacía",
+    "username": "standard_user",
+    "password": "",
+    "expectedError": "Password is required"
+  },
+  {
+    "name": "contraseña incorrecta",
+    "username": "standard_user",
+    "password": "wrong_password",
+    "expectedError": "Username and password do not match any user in this service"
+  },
+  {
+    "name": "usuario bloqueado",
+    "username": "locked_out_user",
+    "password": "secret_sauce",
+    "expectedError": "Sorry, this user has been locked out."
+  }
+]

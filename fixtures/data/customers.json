@@ -1,0 +1,15 @@
+[
+  { "name": "cliente local", "firstName": "Jonathan", "lastName": "Verdun", "postalCode": "12345" },
+  {
+    "name": "cliente con acentos",
+    "firstName": "María José",
+    "lastName": "Gómez Peña",
+    "postalCode": "08001"
+  },
+  {
+    "name": "código postal alfanumérico",
+    "firstName": "Alex",
+    "lastName": "Chen",
+    "postalCode": "K1A 0B1"
+  }
+]

@@ -1,5 +1,6 @@
 import { test, expect } from '../fixtures/test-base';
 import { users } from '../fixtures/users';
+import loginCases from '../fixtures/data/login-cases.json';
 
 test.describe('Login', () => {
   test('permite iniciar sesión con credenciales válidas', async ({ page, loginPage }) => {
@@ -9,24 +10,12 @@ test.describe('Login', () => {
     await expect(page).toHaveURL(/inventory\.html/);
   });
 
-  test('bloquea al usuario locked_out_user con un mensaje de error', async ({ loginPage }) => {
-    await loginPage.goto();
-    await loginPage.login(users.lockedOut.username, users.lockedOut.password);
+  for (const testCase of loginCases) {
+    test(`rechaza el login: ${testCase.name}`, async ({ loginPage }) => {
+      await loginPage.goto();
+      await loginPage.login(testCase.username, testCase.password);
 
-    await expect(loginPage.errorMessage).toContainText('locked out');
-  });
-
-  test('rechaza una contraseña incorrecta', async ({ loginPage }) => {
-    await loginPage.goto();
-    await loginPage.login(users.standard.username, 'wrong_password');
-
-    await expect(loginPage.errorMessage).toContainText('Username and password do not match');
-  });
-
-  test('exige usuario y contraseña', async ({ loginPage }) => {
-    await loginPage.goto();
-    await loginPage.login('', '');
-
-    await expect(loginPage.errorMessage).toContainText('Username is required');
-  });
+      await expect(loginPage.errorMessage).toContainText(testCase.expectedError);
+    });
+  }
 });

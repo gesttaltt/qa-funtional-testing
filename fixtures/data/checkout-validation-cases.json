@@ -1,0 +1,23 @@
+[
+  {
+    "name": "todos los campos vacíos",
+    "firstName": "",
+    "lastName": "",
+    "postalCode": "",
+    "expectedError": "First Name is required"
+  },
+  {
+    "name": "apellido y código postal vacíos",
+    "firstName": "Jonathan",
+    "lastName": "",
+    "postalCode": "",
+    "expectedError": "Last Name is required"
+  },
+  {
+    "name": "solo código postal vacío",
+    "firstName": "Jonathan",
+    "lastName": "Verdun",
+    "postalCode": "",
+    "expectedError": "Postal Code is required"
+  }
+]
