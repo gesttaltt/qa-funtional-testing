@@ -33,9 +33,19 @@ npx playwright install        # download the browsers
 npm test                      # run the full suite (chromium, firefox, webkit)
 npm run test:ui                # interactive UI mode
 npm run test:headed            # run with a visible browser
-npm run report                 # open the latest HTML report
+npm run report                 # open the latest Playwright HTML report
+```
+
+## Allure reports
+
+Every run also writes raw results to `allure-results/` via the `allure-playwright` reporter. Requires a Java runtime (used by the Allure CLI).
+
+```bash
+npm run allure:serve      # generate + open a report in one step (temp dir)
+npm run allure:generate   # build a static report into allure-report/
+npm run allure:open       # open the last generated allure-report/
 ```
 
 ## CI
 
-Every push/PR to `main` runs the full suite on GitHub Actions (`.github/workflows/playwright.yml`) and publishes the HTML report as an artifact.
+Every push/PR to `main` runs the full suite on GitHub Actions (`.github/workflows/playwright.yml`) and publishes both the Playwright HTML report and the generated Allure report as artifacts.
