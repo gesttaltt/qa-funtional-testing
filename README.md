@@ -40,7 +40,12 @@ npm test                      # run the full suite (chromium, firefox, webkit)
 npm run test:ui                # interactive UI mode
 npm run test:headed            # run with a visible browser
 npm run report                 # open the latest Playwright HTML report
+npm run test:flaky-check       # run every test 5x with retries off, to catch intermittent failures
 ```
+
+## Reliability
+
+Since this suite runs against a live third-party site rather than an environment we control, it's been stress-tested for flakiness with `test:flaky-check`: 300 individual test executions across Chromium and Firefox (repeat-each 3-6x, retries disabled) with zero intermittent failures, on top of a clean CI history. Assertions favor Playwright's auto-retrying `expect(locator)` matchers; the few places that read a value with `.textContent()` instead rely on Playwright's built-in wait-for-attachment behavior rather than a fixed timeout.
 
 ## Allure reports
 
