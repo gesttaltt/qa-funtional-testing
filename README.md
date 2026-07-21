@@ -1,6 +1,10 @@
 # Functional QA — SauceDemo
 
+[![Playwright Tests](https://github.com/gesttaltt/qa-funtional-testing/actions/workflows/playwright.yml/badge.svg)](https://github.com/gesttaltt/qa-funtional-testing/actions/workflows/playwright.yml)
+
 End-to-end functional test suite for [saucedemo.com](https://www.saucedemo.com), built with [Playwright](https://playwright.dev/) + TypeScript following the Page Object Model pattern.
+
+**Live report:** https://gesttaltt.github.io/qa-funtional-testing/
 
 ## Coverage
 
@@ -48,4 +52,4 @@ npm run allure:open       # open the last generated allure-report/
 
 ## CI
 
-Every push/PR to `main` runs the full suite on GitHub Actions (`.github/workflows/playwright.yml`) and publishes both the Playwright HTML report and the generated Allure report as artifacts.
+Every push/PR to `main` runs the full suite on GitHub Actions (`.github/workflows/playwright.yml`) and publishes both the Playwright HTML report and the generated Allure report as artifacts. On pushes to `main`, a second job regenerates the Allure report — carrying over trend history from the previously deployed site — and publishes it to GitHub Pages at https://gesttaltt.github.io/qa-funtional-testing/.

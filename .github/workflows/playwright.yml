@@ -39,3 +39,45 @@ jobs:
           name: allure-report
           path: allure-report/
           retention-days: 30
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: allure-results
+          path: allure-results/
+          retention-days: 30
+
+  deploy-report:
+    needs: test
+    if: ${{ !cancelled() && github.ref == 'refs/heads/main' && github.event_name == 'push' }}
+    runs-on: ubuntu-latest
+    permissions:
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          name: allure-results
+          path: allure-results
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+      - name: Install Allure CLI
+        run: npm install -g allure-commandline
+      - name: Fetch previous report history for trend graphs
+        run: |
+          mkdir -p allure-results/history
+          for f in history.json history-trend.json categories-trend.json duration-trend.json retry-trend.json; do
+            curl -sf "https://${{ github.repository_owner }}.github.io/${{ github.event.repository.name }}/history/$f" \
+              -o "allure-results/history/$f" || rm -f "allure-results/history/$f"
+          done
+      - name: Generate Allure report
+        run: allure generate allure-results --clean -o allure-report
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: allure-report
+      - uses: actions/deploy-pages@v4
+        id: deployment
