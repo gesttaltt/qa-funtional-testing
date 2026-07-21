@@ -10,6 +10,7 @@ export class InventoryPage {
   readonly inventoryItems: Locator;
   readonly itemNames: Locator;
   readonly itemPrices: Locator;
+  readonly itemImages: Locator;
 
   constructor(page: Page) {
     this.page = page;
@@ -19,6 +20,7 @@ export class InventoryPage {
     this.inventoryItems = page.locator('.inventory_item');
     this.itemNames = page.locator('.inventory_item_name');
     this.itemPrices = page.locator('.inventory_item_price');
+    this.itemImages = page.locator('.inventory_item_img img');
   }
 
   async sortBy(option: SortOption) {

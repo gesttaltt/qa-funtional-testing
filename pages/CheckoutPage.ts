@@ -9,6 +9,10 @@ export class CheckoutPage {
   readonly finishButton: Locator;
   readonly errorMessage: Locator;
   readonly completeHeader: Locator;
+  readonly summaryItemPrices: Locator;
+  readonly subtotalLabel: Locator;
+  readonly taxLabel: Locator;
+  readonly totalLabel: Locator;
 
   constructor(page: Page) {
     this.page = page;
@@ -19,6 +23,10 @@ export class CheckoutPage {
     this.finishButton = page.locator('#finish');
     this.errorMessage = page.locator('[data-test="error"]');
     this.completeHeader = page.locator('.complete-header');
+    this.summaryItemPrices = page.locator('.inventory_item_price');
+    this.subtotalLabel = page.locator('.summary_subtotal_label');
+    this.taxLabel = page.locator('.summary_tax_label');
+    this.totalLabel = page.locator('.summary_total_label');
   }
 
   async fillInfo(firstName: string, lastName: string, postalCode: string) {

@@ -13,7 +13,10 @@ test.describe('Cart', () => {
 
   test('muestra los productos agregados', async ({ cartPage }) => {
     await expect(cartPage.cartItems).toHaveCount(2);
-    await expect(cartPage.itemNames).toContainText(['Sauce Labs Backpack', 'Sauce Labs Bike Light']);
+    await expect(cartPage.itemNames).toContainText([
+      'Sauce Labs Backpack',
+      'Sauce Labs Bike Light',
+    ]);
   });
 
   test('permite quitar un producto del carrito', async ({ cartPage }) => {
