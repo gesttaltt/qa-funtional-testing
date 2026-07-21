@@ -2,20 +2,45 @@ import { test, expect } from '../fixtures/test-base';
 import { users } from '../fixtures/users';
 
 test.describe('Cart', () => {
+  let inventoryPrices: Record<string, string>;
+
   test.beforeEach(async ({ page, loginPage, inventoryPage }) => {
     await loginPage.goto();
     await loginPage.login(users.standard.username, users.standard.password);
+
+    const backpackPrice = await inventoryPage
+      .itemByName('Sauce Labs Backpack')
+      .locator('.inventory_item_price')
+      .textContent();
+    const bikeLightPrice = await inventoryPage
+      .itemByName('Sauce Labs Bike Light')
+      .locator('.inventory_item_price')
+      .textContent();
+    inventoryPrices = {
+      'Sauce Labs Backpack': backpackPrice ?? '',
+      'Sauce Labs Bike Light': bikeLightPrice ?? '',
+    };
+
     await inventoryPage.addToCart('Sauce Labs Backpack');
     await inventoryPage.addToCart('Sauce Labs Bike Light');
     await inventoryPage.goToCart();
     await expect(page).toHaveURL(/cart\.html/);
   });
 
-  test('muestra los productos agregados', async ({ cartPage }) => {
+  test('muestra los productos agregados con el mismo precio que en inventory', async ({
+    cartPage,
+  }) => {
     await expect(cartPage.cartItems).toHaveCount(2);
     await expect(cartPage.itemNames).toContainText([
       'Sauce Labs Backpack',
       'Sauce Labs Bike Light',
+    ]);
+
+    // el precio en el carrito debe ser el mismo que el usuario vio en inventory,
+    // no un valor recalculado o desactualizado
+    await expect(cartPage.itemPrices).toHaveText([
+      inventoryPrices['Sauce Labs Backpack'],
+      inventoryPrices['Sauce Labs Bike Light'],
     ]);
   });
 

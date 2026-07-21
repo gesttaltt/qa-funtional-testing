@@ -4,13 +4,15 @@ export class CartPage {
   readonly page: Page;
   readonly cartItems: Locator;
   readonly itemNames: Locator;
+  readonly itemPrices: Locator;
   readonly continueShoppingButton: Locator;
   readonly checkoutButton: Locator;
 
   constructor(page: Page) {
     this.page = page;
     this.cartItems = page.locator('.cart_item');
-    this.itemNames = page.locator('.inventory_item_name');
+    this.itemNames = page.locator('.cart_item .inventory_item_name');
+    this.itemPrices = page.locator('.cart_item .inventory_item_price');
     this.continueShoppingButton = page.locator('#continue-shopping');
     this.checkoutButton = page.locator('#checkout');
   }
