@@ -6,6 +6,12 @@
     "expectedError": "Username is required"
   },
   {
+    "name": "usuario vacío",
+    "username": "",
+    "password": "secret_sauce",
+    "expectedError": "Username is required"
+  },
+  {
     "name": "contraseña vacía",
     "username": "standard_user",
     "password": "",

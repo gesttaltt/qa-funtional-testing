@@ -11,7 +11,7 @@ End-to-end functional test suite for [saucedemo.com](https://www.saucedemo.com),
 - **Login**: valid credentials plus a data-driven battery of invalid cases (empty fields, wrong password, locked-out user).
 - **Inventory**: sorting by name and price, adding/removing products, cart badge.
 - **Cart**: cart contents, removing items, continue shopping.
-- **Checkout**: full purchase flow across several customer profiles, required-field validation, total price calculation across different carts — all data-driven.
+- **Checkout**: full purchase flow with cross-screen price integrity (inventory → cart → checkout summary must show the same price) and cart-clears-on-completion check; required-field validation (data-driven) plus a documented quirk where whitespace-only fields bypass validation; total price calculation, verified per-item against inventory, across different cart sizes (data-driven).
 - **Menu**: logout and reset app state.
 - **Special users**: known bugs for `problem_user` (broken image) and `error_user` (uncaught JS exception), tolerance for `performance_glitch_user`'s delay.
 
@@ -26,7 +26,9 @@ tests/          Specs organized by business flow
 
 ## Data-driven testing
 
-Repetitive cases (invalid login variants, checkout validation, customer profiles, cart combinations) live as JSON under `fixtures/data/` and are looped over inside each spec with a `for` to generate one independent test per case — so adding a new case just means editing the JSON, not touching test code.
+Repetitive cases (invalid login variants, checkout validation, cart combinations) live as JSON under `fixtures/data/` and are looped over inside each spec with a `for` to generate one independent test per case — so adding a new case just means editing the JSON, not touching test code.
+
+Data-driven cases are only added when they exercise genuinely different app behavior. An earlier version of this suite parametrized the full purchase flow across several "customer profiles" (different names, postal code formats) — dropped after verifying that SauceDemo's checkout never reflects that input anywhere in the UI, so the variants were tripling test count without adding coverage. The remaining checkout e2e test is a single, deeper case instead.
 
 ## Usage
 
