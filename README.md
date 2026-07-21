@@ -14,6 +14,7 @@ End-to-end functional test suite for [saucedemo.com](https://www.saucedemo.com),
 - **Checkout**: full purchase flow with cross-screen price integrity (inventory → cart → checkout summary must show the same price) and cart-clears-on-completion check; required-field validation (data-driven) plus a documented quirk where whitespace-only fields bypass validation; total price calculation, verified per-item against inventory, across different cart sizes (data-driven).
 - **Menu**: logout and reset app state.
 - **Special users**: known bugs for `problem_user` (broken image) and `error_user` (uncaught JS exception), tolerance for `performance_glitch_user`'s delay.
+- **Accessibility**: [axe-core](https://github.com/dequelabs/axe-core) scan on every screen (login through checkout-complete), failing only on new violations; a documented known issue for the inventory sort `<select>` missing an accessible name.
 
 ## Structure
 
@@ -46,6 +47,10 @@ npm run test:flaky-check       # run every test 5x with retries off, to catch in
 ## Reliability
 
 Since this suite runs against a live third-party site rather than an environment we control, it's been stress-tested for flakiness with `test:flaky-check`: 300 individual test executions across Chromium and Firefox (repeat-each 3-6x, retries disabled) with zero intermittent failures, on top of a clean CI history. Assertions favor Playwright's auto-retrying `expect(locator)` matchers; the few places that read a value with `.textContent()` instead rely on Playwright's built-in wait-for-attachment behavior rather than a fixed timeout.
+
+## Accessibility
+
+`tests/accessibility.spec.ts` runs an [axe-core](https://github.com/dequelabs/axe-core) scan (via `@axe-core/playwright`) on every screen. SauceDemo has real, pre-existing violations we don't control (missing `<main>` landmark, no `<h1>`, content outside landmarks, and a critical one: the inventory sort dropdown has no accessible name) — these are excluded from the per-page checks (`KNOWN_RULES` in the spec) so the suite is red only for _new_ violations, not this baseline debt. The dropdown issue is still tracked, just as its own dedicated "known bug" test rather than failing the general scan — same pattern as the `problem_user`/`error_user` tests.
 
 ## Allure reports
 
