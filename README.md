@@ -1,41 +1,41 @@
-# QA Funcional — SauceDemo
+# Functional QA — SauceDemo
 
-Suite de pruebas funcionales end-to-end para [saucedemo.com](https://www.saucedemo.com), construida con [Playwright](https://playwright.dev/) + TypeScript siguiendo el patrón Page Object Model.
+End-to-end functional test suite for [saucedemo.com](https://www.saucedemo.com), built with [Playwright](https://playwright.dev/) + TypeScript following the Page Object Model pattern.
 
-## Cobertura
+## Coverage
 
-- **Login**: credenciales válidas y una batería data-driven de casos inválidos (campos vacíos, contraseña incorrecta, usuario bloqueado).
-- **Inventory**: ordenamiento por nombre y precio, agregar/quitar productos, badge del carrito.
-- **Cart**: contenido del carrito, remover ítems, continuar comprando.
-- **Checkout**: flujo completo de compra sobre varios perfiles de cliente, validación de campos requeridos, cálculo de precio total sobre distintos carritos — todo data-driven.
-- **Menú**: logout y reset app state.
-- **Usuarios especiales**: bugs conocidos de `problem_user` (imagen rota) y `error_user` (excepción JS no capturada), tolerancia a la demora de `performance_glitch_user`.
+- **Login**: valid credentials plus a data-driven battery of invalid cases (empty fields, wrong password, locked-out user).
+- **Inventory**: sorting by name and price, adding/removing products, cart badge.
+- **Cart**: cart contents, removing items, continue shopping.
+- **Checkout**: full purchase flow across several customer profiles, required-field validation, total price calculation across different carts — all data-driven.
+- **Menu**: logout and reset app state.
+- **Special users**: known bugs for `problem_user` (broken image) and `error_user` (uncaught JS exception), tolerance for `performance_glitch_user`'s delay.
 
-## Estructura
+## Structure
 
 ```
-pages/          Page Objects (locators + acciones por pantalla)
-fixtures/       Fixture custom de Playwright y datos de usuarios
-fixtures/data/  Datos de prueba externos en JSON (data-driven testing)
-tests/          Specs organizados por flujo de negocio
+pages/          Page Objects (locators + actions per screen)
+fixtures/       Playwright custom fixture and user data
+fixtures/data/  External JSON test data (data-driven testing)
+tests/          Specs organized by business flow
 ```
 
 ## Data-driven testing
 
-Los casos repetitivos (variantes de login inválido, validación de checkout, perfiles de cliente, combinaciones de carrito) viven como JSON en `fixtures/data/` y se recorren con un `for` dentro de cada spec para generar un test independiente por caso — así agregar un caso nuevo es editar el JSON, no tocar el código del test.
+Repetitive cases (invalid login variants, checkout validation, customer profiles, cart combinations) live as JSON under `fixtures/data/` and are looped over inside each spec with a `for` to generate one independent test per case — so adding a new case just means editing the JSON, not touching test code.
 
-## Uso
+## Usage
 
 ```bash
 npm install
-npx playwright install        # descarga los navegadores
+npx playwright install        # download the browsers
 
-npm test                      # corre toda la suite (chromium, firefox, webkit)
-npm run test:ui                # modo UI interactivo
-npm run test:headed            # corre con navegador visible
-npm run report                 # abre el último reporte HTML
+npm test                      # run the full suite (chromium, firefox, webkit)
+npm run test:ui                # interactive UI mode
+npm run test:headed            # run with a visible browser
+npm run report                 # open the latest HTML report
 ```
 
 ## CI
 
-Cada push/PR a `main` corre la suite completa en GitHub Actions (`.github/workflows/playwright.yml`) y publica el reporte HTML como artifact.
+Every push/PR to `main` runs the full suite on GitHub Actions (`.github/workflows/playwright.yml`) and publishes the HTML report as an artifact.
