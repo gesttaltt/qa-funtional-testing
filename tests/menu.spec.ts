@@ -1,12 +1,6 @@
-import { test, expect } from '../fixtures/test-base';
-import { users } from '../fixtures/users';
+import { test, expect } from '../fixtures/authenticated-test';
 
 test.describe('Menú de navegación', () => {
-  test.beforeEach(async ({ loginPage }) => {
-    await loginPage.goto();
-    await loginPage.login(users.standard.username, users.standard.password);
-  });
-
   test('logout redirige al login y protege el acceso directo a inventory', async ({
     page,
     menu,

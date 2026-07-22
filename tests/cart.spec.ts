@@ -1,13 +1,9 @@
-import { test, expect } from '../fixtures/test-base';
-import { users } from '../fixtures/users';
+import { test, expect } from '../fixtures/authenticated-test';
 
 test.describe('Cart', () => {
   let inventoryPrices: Record<string, string>;
 
-  test.beforeEach(async ({ page, loginPage, inventoryPage }) => {
-    await loginPage.goto();
-    await loginPage.login(users.standard.username, users.standard.password);
-
+  test.beforeEach(async ({ page, inventoryPage }) => {
     const backpackPrice = await inventoryPage
       .itemByName('Sauce Labs Backpack')
       .locator('.inventory_item_price')

@@ -1,7 +1,7 @@
 import { type Page } from '@playwright/test';
 import { AxeBuilder } from '@axe-core/playwright';
 import { test, expect } from '../fixtures/test-base';
-import { users } from '../fixtures/users';
+import { test as authedTest } from '../fixtures/authenticated-test';
 
 // Violaciones preexistentes de SauceDemo (verificado en vivo), fuera de nuestro control:
 // - landmark-one-main / page-has-heading-one / region: deuda de estructura de documento en
@@ -24,90 +24,67 @@ test.describe('Accesibilidad', () => {
     await expectNoNewViolations(page);
   });
 
-  test('inventory no tiene violaciones nuevas de accesibilidad', async ({ page, loginPage }) => {
-    await loginPage.goto();
-    await loginPage.login(users.standard.username, users.standard.password);
-
+  authedTest('inventory no tiene violaciones nuevas de accesibilidad', async ({ page }) => {
     await expectNoNewViolations(page);
   });
 
-  test('cart no tiene violaciones nuevas de accesibilidad', async ({
-    page,
-    loginPage,
-    inventoryPage,
-  }) => {
-    await loginPage.goto();
-    await loginPage.login(users.standard.username, users.standard.password);
-    await inventoryPage.addToCart('Sauce Labs Backpack');
-    await inventoryPage.goToCart();
+  authedTest(
+    'cart no tiene violaciones nuevas de accesibilidad',
+    async ({ page, inventoryPage }) => {
+      await inventoryPage.addToCart('Sauce Labs Backpack');
+      await inventoryPage.goToCart();
 
-    await expectNoNewViolations(page);
-  });
+      await expectNoNewViolations(page);
+    }
+  );
 
-  test('checkout-step-one no tiene violaciones nuevas de accesibilidad', async ({
-    page,
-    loginPage,
-    inventoryPage,
-    cartPage,
-  }) => {
-    await loginPage.goto();
-    await loginPage.login(users.standard.username, users.standard.password);
-    await inventoryPage.addToCart('Sauce Labs Backpack');
-    await inventoryPage.goToCart();
-    await cartPage.checkout();
+  authedTest(
+    'checkout-step-one no tiene violaciones nuevas de accesibilidad',
+    async ({ page, inventoryPage, cartPage }) => {
+      await inventoryPage.addToCart('Sauce Labs Backpack');
+      await inventoryPage.goToCart();
+      await cartPage.checkout();
 
-    await expectNoNewViolations(page);
-  });
+      await expectNoNewViolations(page);
+    }
+  );
 
-  test('checkout-step-two no tiene violaciones nuevas de accesibilidad', async ({
-    page,
-    loginPage,
-    inventoryPage,
-    cartPage,
-    checkoutPage,
-  }) => {
-    await loginPage.goto();
-    await loginPage.login(users.standard.username, users.standard.password);
-    await inventoryPage.addToCart('Sauce Labs Backpack');
-    await inventoryPage.goToCart();
-    await cartPage.checkout();
-    await checkoutPage.fillInfo('Jonathan', 'Verdun', '12345');
+  authedTest(
+    'checkout-step-two no tiene violaciones nuevas de accesibilidad',
+    async ({ page, inventoryPage, cartPage, checkoutPage }) => {
+      await inventoryPage.addToCart('Sauce Labs Backpack');
+      await inventoryPage.goToCart();
+      await cartPage.checkout();
+      await checkoutPage.fillInfo('Jonathan', 'Verdun', '12345');
 
-    await expectNoNewViolations(page);
-  });
+      await expectNoNewViolations(page);
+    }
+  );
 
-  test('checkout-complete no tiene violaciones nuevas de accesibilidad', async ({
-    page,
-    loginPage,
-    inventoryPage,
-    cartPage,
-    checkoutPage,
-  }) => {
-    await loginPage.goto();
-    await loginPage.login(users.standard.username, users.standard.password);
-    await inventoryPage.addToCart('Sauce Labs Backpack');
-    await inventoryPage.goToCart();
-    await cartPage.checkout();
-    await checkoutPage.fillInfo('Jonathan', 'Verdun', '12345');
-    await checkoutPage.finish();
+  authedTest(
+    'checkout-complete no tiene violaciones nuevas de accesibilidad',
+    async ({ page, inventoryPage, cartPage, checkoutPage }) => {
+      await inventoryPage.addToCart('Sauce Labs Backpack');
+      await inventoryPage.goToCart();
+      await cartPage.checkout();
+      await checkoutPage.fillInfo('Jonathan', 'Verdun', '12345');
+      await checkoutPage.finish();
 
-    await expectNoNewViolations(page);
-  });
+      await expectNoNewViolations(page);
+    }
+  );
 });
 
 test.describe('Accesibilidad - bug conocido', () => {
-  test('el selector de orden en inventory no tiene nombre accesible (bug conocido)', async ({
-    page,
-    loginPage,
-  }) => {
-    await loginPage.goto();
-    await loginPage.login(users.standard.username, users.standard.password);
+  authedTest(
+    'el selector de orden en inventory no tiene nombre accesible (bug conocido)',
+    async ({ page }) => {
+      const results = await new AxeBuilder({ page })
+        .include('[data-test="product-sort-container"]')
+        .analyze();
 
-    const results = await new AxeBuilder({ page })
-      .include('[data-test="product-sort-container"]')
-      .analyze();
-
-    const violationIds = results.violations.map((v) => v.id);
-    expect(violationIds).toContain('select-name');
-  });
+      const violationIds = results.violations.map((v) => v.id);
+      expect(violationIds).toContain('select-name');
+    }
+  );
 });

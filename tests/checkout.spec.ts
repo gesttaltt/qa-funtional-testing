@@ -1,5 +1,4 @@
-import { test, expect } from '../fixtures/test-base';
-import { users } from '../fixtures/users';
+import { test, expect } from '../fixtures/authenticated-test';
 import checkoutValidationCases from '../fixtures/data/checkout-validation-cases.json';
 import checkoutCarts from '../fixtures/data/checkout-carts.json';
 
@@ -8,14 +7,10 @@ const toNumber = (text: string) => parseFloat(text.replace(/[^0-9.]/g, ''));
 test.describe('Checkout - flujo completo de compra', () => {
   test('completa la compra preservando el precio del producto y vacía el carrito al volver', async ({
     page,
-    loginPage,
     inventoryPage,
     cartPage,
     checkoutPage,
   }) => {
-    await loginPage.goto();
-    await loginPage.login(users.standard.username, users.standard.password);
-
     const inventoryPrice = await inventoryPage
       .itemByName('Sauce Labs Backpack')
       .locator('.inventory_item_price')
@@ -45,9 +40,7 @@ test.describe('Checkout - flujo completo de compra', () => {
 });
 
 test.describe('Checkout - validación de datos requeridos', () => {
-  test.beforeEach(async ({ page, loginPage, inventoryPage, cartPage }) => {
-    await loginPage.goto();
-    await loginPage.login(users.standard.username, users.standard.password);
+  test.beforeEach(async ({ page, inventoryPage, cartPage }) => {
     await inventoryPage.addToCart('Sauce Labs Backpack');
     await inventoryPage.goToCart();
     await cartPage.checkout();
@@ -79,14 +72,10 @@ test.describe('Checkout - cálculo de precio total', () => {
   for (const cart of checkoutCarts) {
     test(`el total del resumen coincide con subtotal + impuesto: ${cart.name}`, async ({
       page,
-      loginPage,
       inventoryPage,
       cartPage,
       checkoutPage,
     }) => {
-      await loginPage.goto();
-      await loginPage.login(users.standard.username, users.standard.password);
-
       const inventoryPrices: Record<string, number> = {};
       for (const product of cart.products) {
         const priceText = await inventoryPage

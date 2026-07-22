@@ -15,6 +15,7 @@
     "lint:fix": "eslint . --fix",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
+    "typecheck": "tsc --noEmit",
     "prepare": "husky"
   },
   "keywords": [
@@ -23,8 +24,13 @@
     "e2e",
     "testing"
   ],
-  "author": "",
-  "license": "ISC",
+  "author": "Jonathan Verdun",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/gesttaltt/qa-funtional-testing.git"
+  },
+  "homepage": "https://gesttaltt.github.io/qa-funtional-testing/",
   "lint-staged": {
     "*.{ts,js,mjs}": "eslint --fix",
     "*.{ts,js,mjs,json,md}": "prettier --write"
@@ -33,6 +39,7 @@
     "@axe-core/playwright": "^4.12.1",
     "@eslint/js": "^10.0.1",
     "@playwright/test": "^1.61.1",
+    "@types/node": "^20.19.43",
     "allure-commandline": "^2.43.0",
     "allure-playwright": "^3.10.2",
     "eslint": "^10.7.0",

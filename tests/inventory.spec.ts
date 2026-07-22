@@ -1,12 +1,6 @@
-import { test, expect } from '../fixtures/test-base';
-import { users } from '../fixtures/users';
+import { test, expect } from '../fixtures/authenticated-test';
 
 test.describe('Inventory', () => {
-  test.beforeEach(async ({ loginPage }) => {
-    await loginPage.goto();
-    await loginPage.login(users.standard.username, users.standard.password);
-  });
-
   test('ordena los productos por nombre A-Z y Z-A', async ({ inventoryPage }) => {
     await inventoryPage.sortBy('az');
     const namesAsc = await inventoryPage.itemNames.allTextContents();
