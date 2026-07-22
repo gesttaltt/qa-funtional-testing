@@ -15,11 +15,11 @@ export class InventoryPage {
   constructor(page: Page) {
     this.page = page;
     this.sortDropdown = page.locator('[data-test="product-sort-container"]');
-    this.cartBadge = page.locator('.shopping_cart_badge');
-    this.cartLink = page.locator('.shopping_cart_link');
-    this.inventoryItems = page.locator('.inventory_item');
-    this.itemNames = page.locator('.inventory_item_name');
-    this.itemPrices = page.locator('.inventory_item_price');
+    this.cartBadge = page.locator('[data-test="shopping-cart-badge"]');
+    this.cartLink = page.locator('[data-test="shopping-cart-link"]');
+    this.inventoryItems = page.locator('[data-test="inventory-item"]');
+    this.itemNames = page.locator('[data-test="inventory-item-name"]');
+    this.itemPrices = page.locator('[data-test="inventory-item-price"]');
     this.itemImages = page.locator('.inventory_item_img img');
   }
 

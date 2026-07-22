@@ -10,9 +10,9 @@ export class CartPage {
 
   constructor(page: Page) {
     this.page = page;
-    this.cartItems = page.locator('.cart_item');
-    this.itemNames = page.locator('.cart_item .inventory_item_name');
-    this.itemPrices = page.locator('.cart_item .inventory_item_price');
+    this.cartItems = page.locator('[data-test="inventory-item"]');
+    this.itemNames = page.locator('[data-test="inventory-item-name"]');
+    this.itemPrices = page.locator('[data-test="inventory-item-price"]');
     this.continueShoppingButton = page.locator('#continue-shopping');
     this.checkoutButton = page.locator('#checkout');
   }

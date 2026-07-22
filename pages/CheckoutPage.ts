@@ -24,12 +24,12 @@ export class CheckoutPage {
     this.continueButton = page.locator('#continue');
     this.finishButton = page.locator('#finish');
     this.errorMessage = page.locator('[data-test="error"]');
-    this.completeHeader = page.locator('.complete-header');
-    this.summaryItemNames = page.locator('.cart_item .inventory_item_name');
-    this.summaryItemPrices = page.locator('.cart_item .inventory_item_price');
-    this.subtotalLabel = page.locator('.summary_subtotal_label');
-    this.taxLabel = page.locator('.summary_tax_label');
-    this.totalLabel = page.locator('.summary_total_label');
+    this.completeHeader = page.locator('[data-test="complete-header"]');
+    this.summaryItemNames = page.locator('[data-test="inventory-item-name"]');
+    this.summaryItemPrices = page.locator('[data-test="inventory-item-price"]');
+    this.subtotalLabel = page.locator('[data-test="subtotal-label"]');
+    this.taxLabel = page.locator('[data-test="tax-label"]');
+    this.totalLabel = page.locator('[data-test="total-label"]');
     this.backToProductsButton = page.locator('#back-to-products');
   }
 
