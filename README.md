@@ -1,6 +1,9 @@
 # Functional QA — SauceDemo
 
 [![Playwright Tests](https://github.com/gesttaltt/qa-funtional-testing/actions/workflows/playwright.yml/badge.svg)](https://github.com/gesttaltt/qa-funtional-testing/actions/workflows/playwright.yml)
+[![CodeQL](https://github.com/gesttaltt/qa-funtional-testing/actions/workflows/codeql.yml/badge.svg)](https://github.com/gesttaltt/qa-funtional-testing/actions/workflows/codeql.yml)
+[![Playwright version](https://img.shields.io/github/package-json/dependency-version/gesttaltt/qa-funtional-testing/dev/@playwright/test)](https://playwright.dev)
+[![License](https://img.shields.io/github/license/gesttaltt/qa-funtional-testing)](LICENSE)
 
 End-to-end functional test suite for [saucedemo.com](https://www.saucedemo.com), built with [Playwright](https://playwright.dev/) + TypeScript following the Page Object Model pattern.
 
