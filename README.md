@@ -6,6 +6,8 @@ End-to-end functional test suite for [saucedemo.com](https://www.saucedemo.com),
 
 **Live report:** https://gesttaltt.github.io/qa-funtional-testing/
 
+[![Allure report](docs/screenshots/allure-report.png)](https://gesttaltt.github.io/qa-funtional-testing/)
+
 ## Coverage
 
 - **Login**: valid credentials plus a data-driven battery of invalid cases (empty fields, wrong password, locked-out user).
@@ -20,10 +22,27 @@ End-to-end functional test suite for [saucedemo.com](https://www.saucedemo.com),
 
 ```
 pages/          Page Objects (locators + actions per screen)
-fixtures/       Playwright custom fixture and user data
+fixtures/       Playwright custom fixtures and user data
 fixtures/data/  External JSON test data (data-driven testing)
 tests/          Specs organized by business flow
 ```
+
+## Architecture
+
+```mermaid
+flowchart TB
+    A["tests/*.spec.ts"] -->|uses| B["fixtures/test-base.ts<br/>authenticated-test.ts"]
+    A -->|data-driven cases| D["fixtures/data/*.json"]
+    B --> C["pages/*.ts<br/>Page Objects"]
+    C -->|drives| E(("saucedemo.com"))
+
+    A -->|push / PR| F["CI: lint + format:check + typecheck"]
+    F --> G["playwright test<br/>chromium / firefox / webkit"]
+    G --> H["Playwright HTML +<br/>Allure report"]
+    H -->|push to main| I["GitHub Pages"]
+```
+
+Specs never talk to the page directly: they call Page Object methods, which own the locators. `fixtures/test-base.ts` wires the Page Objects into Playwright's `test`; `fixtures/authenticated-test.ts` extends it to auto-login as `standard_user` for specs that don't need to control credentials, cutting login boilerplate from every test in `inventory`, `cart`, `checkout`, `menu`, and most of `accessibility`. Every push runs quality gates before the browsers even install — a lint, format, or type error fails fast instead of burning CI minutes on a doomed test run.
 
 ## Data-driven testing
 
