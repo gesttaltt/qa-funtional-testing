@@ -9,6 +9,7 @@ export default defineConfig({
   reporter: [
     ['html'],
     ['allure-playwright', { resultsDir: 'allure-results', detail: true, suiteTitle: false }],
+    ...(process.env.CI ? [['github'] as const] : []),
   ],
   use: {
     baseURL: 'https://www.saucedemo.com',
