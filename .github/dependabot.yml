@@ -8,6 +8,12 @@ updates:
       dev-dependencies:
         patterns:
           - '*'
+    ignore:
+      # typescript-eslint pins a narrower typescript peer range than typescript itself
+      # releases at; a grouped major bump breaks `npm ci` with ERESOLVE before bumping
+      # typescript-eslint too. Bump both together by hand instead.
+      - dependency-name: 'typescript'
+        update-types: ['version-update:semver-major']
 
   - package-ecosystem: github-actions
     directory: /
