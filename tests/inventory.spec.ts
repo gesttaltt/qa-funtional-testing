@@ -4,11 +4,10 @@ test.describe('Inventory', () => {
   test('ordena los productos por nombre A-Z y Z-A', async ({ inventoryPage }) => {
     await inventoryPage.sortBy('az');
     const namesAsc = await inventoryPage.itemNames.allTextContents();
-    expect(namesAsc).toEqual([...namesAsc].sort());
+    await expect(inventoryPage.itemNames).toHaveText([...namesAsc].sort());
 
     await inventoryPage.sortBy('za');
-    const namesDesc = await inventoryPage.itemNames.allTextContents();
-    expect(namesDesc).toEqual([...namesAsc].sort().reverse());
+    await expect(inventoryPage.itemNames).toHaveText([...namesAsc].sort().reverse());
   });
 
   test('ordena los productos por precio ascendente y descendente', async ({ inventoryPage }) => {
