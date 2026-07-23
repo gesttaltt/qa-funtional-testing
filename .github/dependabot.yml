@@ -14,6 +14,12 @@ updates:
       # typescript-eslint too. Bump both together by hand instead.
       - dependency-name: 'typescript'
         update-types: ['version-update:semver-major']
+      # Pinned to match the Node major version CI/local actually run (see
+      # .github/workflows/playwright.yml `node-version`). A newer major here silently
+      # type-checks against APIs the runtime doesn't have — tsc won't catch that unless
+      # the code happens to use one. Bump by hand alongside a node-version bump.
+      - dependency-name: '@types/node'
+        update-types: ['version-update:semver-major']
 
   - package-ecosystem: github-actions
     directory: /
