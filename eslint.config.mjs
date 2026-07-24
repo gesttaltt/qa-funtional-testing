@@ -1,12 +1,13 @@
 // @ts-check
+import { defineConfig } from 'eslint/config';
 import js from '@eslint/js';
 import tseslint from 'typescript-eslint';
 import eslintConfigPrettier from 'eslint-config-prettier';
 import playwright from 'eslint-plugin-playwright';
 
-export default tseslint.config(
+export default defineConfig([
   js.configs.recommended,
-  ...tseslint.configs.recommendedTypeChecked,
+  tseslint.configs.strictTypeChecked,
   eslintConfigPrettier,
   {
     languageOptions: {
@@ -35,10 +36,9 @@ export default tseslint.config(
   },
   {
     files: ['tests/**/*.ts', 'fixtures/**/*.ts'],
-    ...playwright.configs['flat/recommended'],
+    extends: [playwright.configs['flat/recommended']],
     rules: {
-      ...playwright.configs['flat/recommended'].rules,
       'playwright/expect-expect': ['warn', { assertFunctionNames: ['expectNoNewViolations'] }],
     },
-  }
-);
+  },
+]);
