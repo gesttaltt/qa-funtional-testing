@@ -4,14 +4,8 @@ test.describe('Cart', () => {
   let inventoryPrices: Record<string, string>;
 
   test.beforeEach(async ({ page, inventoryPage }) => {
-    const backpackPrice = await inventoryPage
-      .itemByName('Sauce Labs Backpack')
-      .locator('.inventory_item_price')
-      .textContent();
-    const bikeLightPrice = await inventoryPage
-      .itemByName('Sauce Labs Bike Light')
-      .locator('.inventory_item_price')
-      .textContent();
+    const backpackPrice = await inventoryPage.priceOf('Sauce Labs Backpack').textContent();
+    const bikeLightPrice = await inventoryPage.priceOf('Sauce Labs Bike Light').textContent();
     inventoryPrices = {
       'Sauce Labs Backpack': backpackPrice ?? '',
       'Sauce Labs Bike Light': bikeLightPrice ?? '',

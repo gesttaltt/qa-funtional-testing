@@ -11,10 +11,7 @@ test.describe('Checkout - flujo completo de compra', () => {
     cartPage,
     checkoutPage,
   }) => {
-    const inventoryPrice = await inventoryPage
-      .itemByName('Sauce Labs Backpack')
-      .locator('.inventory_item_price')
-      .textContent();
+    const inventoryPrice = await inventoryPage.priceOf('Sauce Labs Backpack').textContent();
 
     await inventoryPage.addToCart('Sauce Labs Backpack');
     await inventoryPage.goToCart();
@@ -78,10 +75,7 @@ test.describe('Checkout - cálculo de precio total', () => {
     }) => {
       const inventoryPrices: Record<string, number> = {};
       for (const product of cart.products) {
-        const priceText = await inventoryPage
-          .itemByName(product)
-          .locator('.inventory_item_price')
-          .textContent();
+        const priceText = await inventoryPage.priceOf(product).textContent();
         inventoryPrices[product] = toNumber(priceText ?? '');
         await inventoryPage.addToCart(product);
       }

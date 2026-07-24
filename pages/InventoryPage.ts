@@ -2,6 +2,8 @@ import { type Locator, type Page } from '@playwright/test';
 
 export type SortOption = 'az' | 'za' | 'lohi' | 'hilo';
 
+const PRICE_SELECTOR = '[data-test="inventory-item-price"]';
+
 export class InventoryPage {
   readonly page: Page;
   readonly sortDropdown: Locator;
@@ -19,7 +21,7 @@ export class InventoryPage {
     this.cartLink = page.locator('[data-test="shopping-cart-link"]');
     this.inventoryItems = page.locator('[data-test="inventory-item"]');
     this.itemNames = page.locator('[data-test="inventory-item-name"]');
-    this.itemPrices = page.locator('[data-test="inventory-item-price"]');
+    this.itemPrices = page.locator(PRICE_SELECTOR);
     this.itemImages = page.locator('.inventory_item_img img');
   }
 
@@ -29,6 +31,10 @@ export class InventoryPage {
 
   itemByName(name: string): Locator {
     return this.inventoryItems.filter({ hasText: name });
+  }
+
+  priceOf(name: string): Locator {
+    return this.itemByName(name).locator(PRICE_SELECTOR);
   }
 
   async addToCart(name: string) {
