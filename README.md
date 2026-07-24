@@ -64,7 +64,13 @@ npm run test:ui                # interactive UI mode
 npm run test:headed            # run with a visible browser
 npm run report                 # open the latest Playwright HTML report
 npm run test:flaky-check       # run every test 5x with retries off, to catch intermittent failures
+
+npm run lint                   # ESLint (JS/TS + Playwright-specific rules)
+npm run format:check           # Prettier, no writes
+npm run typecheck              # tsc --noEmit
 ```
+
+These are the same gates CI runs before it installs a single browser — a PR that fails any of them never gets to the point of running a test.
 
 ## Reliability
 
@@ -86,4 +92,6 @@ npm run allure:open       # open the last generated allure-report/
 
 ## CI
 
-Every push/PR to `main` runs the full suite on GitHub Actions (`.github/workflows/playwright.yml`) and publishes both the Playwright HTML report and the generated Allure report as artifacts. On pushes to `main`, a second job regenerates the Allure report — carrying over trend history from the previously deployed site — and publishes it to GitHub Pages at https://gesttaltt.github.io/qa-funtional-testing/.
+Every push/PR to `main` runs lint, format check, and typecheck, then the full suite on GitHub Actions (`.github/workflows/playwright.yml`), and publishes both the Playwright HTML report and the generated Allure report as artifacts. On pushes to `main`, a second job regenerates the Allure report — carrying over trend history from the previously deployed site — and publishes it to GitHub Pages at https://gesttaltt.github.io/qa-funtional-testing/. A `concurrency` group cancels a run if a newer push lands on the same branch before it finishes.
+
+`main` requires the `test` and `Analyze` (CodeQL) status checks to pass before a PR can be merged; force-pushes and deletions on `main` are blocked. `.github/workflows/codeql.yml` scans the codebase for JS/TS security issues on every push/PR plus a weekly schedule. Dependency updates come from Dependabot (`.github/dependabot.yml`, weekly for both npm and GitHub Actions) with security alerts enabled at the repo level — anything it proposes still has to pass the same checks as a human-authored PR.
