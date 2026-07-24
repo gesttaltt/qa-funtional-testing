@@ -6,8 +6,18 @@ import playwright from 'eslint-plugin-playwright';
 
 export default tseslint.config(
   js.configs.recommended,
-  ...tseslint.configs.recommended,
+  ...tseslint.configs.recommendedTypeChecked,
   eslintConfigPrettier,
+  {
+    languageOptions: {
+      parserOptions: {
+        projectService: {
+          allowDefaultProject: ['eslint.config.mjs'],
+        },
+        tsconfigRootDir: import.meta.dirname,
+      },
+    },
+  },
   {
     ignores: [
       'node_modules/',
