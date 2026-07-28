@@ -77,9 +77,10 @@ Instead, the five tests that together cover the critical user journey — login,
 npm install
 npx playwright install        # download the browsers
 
-npm test                      # run the full suite (chromium, firefox, webkit)
+npm test                      # run the full suite (chromium, firefox, webkit, Mobile Chrome)
 npm run test:ui                # interactive UI mode
 npm run test:headed            # run with a visible browser
+npm run test:mobile            # run only the Mobile Chrome @smoke subset
 npm run report                 # open the latest Playwright HTML report
 npm run test:flaky-check       # run every test 5x with retries off, to catch intermittent failures
 
