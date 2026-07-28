@@ -93,7 +93,7 @@ These are the same gates CI runs before it installs a single browser — a PR th
 
 ## Reliability
 
-Since this suite runs against a live third-party site rather than an environment we control, it's been stress-tested for flakiness with `test:flaky-check`: 300 individual test executions across Chromium and Firefox (repeat-each 3-6x, retries disabled) with zero intermittent failures, on top of a clean CI history. Assertions favor Playwright's auto-retrying `expect(locator)` matchers; the few places that read a value with `.textContent()` instead rely on Playwright's built-in wait-for-attachment behavior rather than a fixed timeout.
+Since this suite runs against a live third-party site rather than an environment we control, it's been stress-tested for flakiness with `test:flaky-check`: 355 individual test executions across Chromium, Firefox, and Mobile Chrome (repeat-each 5x, retries disabled) with zero intermittent failures, on top of a clean CI history — where every run also exercises WebKit. Assertions favor Playwright's auto-retrying `expect(locator)` matchers; the few places that read a value with `.textContent()` instead rely on Playwright's built-in wait-for-attachment behavior rather than a fixed timeout.
 
 ## Accessibility
 
