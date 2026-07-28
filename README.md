@@ -10,6 +10,10 @@ End-to-end functional test suite for [saucedemo.com](https://www.saucedemo.com),
 
 **Live report:** https://gesttaltt.github.io/qa-funtional-testing/
 
+![Login through checkout, driven end-to-end by the suite](docs/screenshots/demo.gif)
+
+<sup>Actual `@smoke` run, recorded with `slowMo` for visibility: login → add/remove from cart → cart → full checkout → logout.</sup>
+
 [![Allure report](docs/screenshots/allure-report.png)](https://gesttaltt.github.io/qa-funtional-testing/)
 
 ## Coverage
@@ -112,7 +116,7 @@ Every push/PR to `main` runs on GitHub Actions (`.github/workflows/playwright.ym
 
 1. **`checks`** — lint, format check, typecheck. Runs once, no browsers involved.
 2. **`test`** — a matrix job (`chromium` / `firefox` / `webkit` / `Mobile Chrome`) that only starts once `checks` passes; each project runs in its own parallel job, with Playwright's browser binaries cached (`actions/cache`, keyed by OS + underlying browser engine + lockfile hash — `Mobile Chrome` shares the `chromium` cache entry, since it's the same engine under emulation) so a cache hit skips the download and only installs OS-level dependencies. Each job publishes its own Playwright HTML report, Allure report, and raw Allure results as artifacts.
-3. **`deploy-report`** (pushes to `main` only) — downloads and merges the three browsers' Allure results, regenerates a single combined Allure report — carrying over trend history from the previously deployed site — and publishes it to GitHub Pages at https://gesttaltt.github.io/qa-funtional-testing/.
+3. **`deploy-report`** (pushes to `main` only) — downloads and merges the four projects' Allure results, regenerates a single combined Allure report — carrying over trend history from the previously deployed site — and publishes it to GitHub Pages at https://gesttaltt.github.io/qa-funtional-testing/.
 
 A `concurrency` group cancels a run if a newer push lands on the same branch before it finishes.
 
