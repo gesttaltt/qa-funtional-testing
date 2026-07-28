@@ -3,6 +3,7 @@
 [![Playwright Tests](https://github.com/gesttaltt/qa-funtional-testing/actions/workflows/playwright.yml/badge.svg)](https://github.com/gesttaltt/qa-funtional-testing/actions/workflows/playwright.yml)
 [![CodeQL](https://github.com/gesttaltt/qa-funtional-testing/actions/workflows/codeql.yml/badge.svg)](https://github.com/gesttaltt/qa-funtional-testing/actions/workflows/codeql.yml)
 [![Playwright version](https://img.shields.io/github/package-json/dependency-version/gesttaltt/qa-funtional-testing/dev/@playwright/test)](https://playwright.dev)
+[![Node](https://img.shields.io/badge/dynamic/json?url=https%3A%2F%2Fraw.githubusercontent.com%2Fgesttaltt%2Fqa-funtional-testing%2Fmain%2Fpackage.json&label=node&query=%24.engines.node)](package.json)
 [![License](https://img.shields.io/github/license/gesttaltt/qa-funtional-testing)](LICENSE)
 
 End-to-end functional test suite for [saucedemo.com](https://www.saucedemo.com), built with [Playwright](https://playwright.dev/) + TypeScript following the Page Object Model pattern.
