@@ -30,10 +30,11 @@ End-to-end functional test suite for [saucedemo.com](https://www.saucedemo.com),
 ## Structure
 
 ```
-pages/          Page Objects (locators + actions per screen)
-fixtures/       Playwright custom fixtures and user data
-fixtures/data/  External JSON test data (data-driven testing)
-tests/          Specs organized by business flow
+pages/               Page Objects (locators + actions per screen)
+fixtures/            Playwright custom fixtures and user data
+fixtures/data/       External JSON test data (data-driven testing)
+tests/               Specs organized by business flow
+docs/screenshots/    Images used in this README
 ```
 
 ## Architecture

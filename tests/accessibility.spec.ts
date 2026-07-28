@@ -98,19 +98,25 @@ test.describe('Accesibilidad - navegación por teclado', () => {
     // 100% teclado.
     await expect(loginPage.usernameInput).toBeVisible();
 
-    await page.keyboard.press('Tab');
-    await expect(loginPage.usernameInput).toBeFocused();
-    await page.keyboard.type(users.standard.username);
+    await test.step('tabular a username y escribirlo', async () => {
+      await page.keyboard.press('Tab');
+      await expect(loginPage.usernameInput).toBeFocused();
+      await page.keyboard.type(users.standard.username);
+    });
 
-    await page.keyboard.press('Tab');
-    await expect(loginPage.passwordInput).toBeFocused();
-    await page.keyboard.type(users.standard.password);
+    await test.step('tabular a password y escribirlo', async () => {
+      await page.keyboard.press('Tab');
+      await expect(loginPage.passwordInput).toBeFocused();
+      await page.keyboard.type(users.standard.password);
+    });
 
-    await page.keyboard.press('Tab');
-    await expect(loginPage.loginButton).toBeFocused();
+    await test.step('tabular al botón de login y enviar con Enter', async () => {
+      await page.keyboard.press('Tab');
+      await expect(loginPage.loginButton).toBeFocused();
 
-    await page.keyboard.press('Enter');
-    await expect(page).toHaveURL(/inventory\.html/);
+      await page.keyboard.press('Enter');
+      await expect(page).toHaveURL(/inventory\.html/);
+    });
   });
 });
 
