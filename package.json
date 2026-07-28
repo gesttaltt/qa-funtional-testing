@@ -27,7 +27,7 @@
   "author": "Jonathan Verdun",
   "license": "MIT",
   "engines": {
-    "node": ">=20 <21"
+    "node": ">=22 <23"
   },
   "repository": {
     "type": "git",
@@ -42,7 +42,7 @@
     "@axe-core/playwright": "^4.12.1",
     "@eslint/js": "^10.0.1",
     "@playwright/test": "^1.62.0",
-    "@types/node": "^20.19.43",
+    "@types/node": "^22.20.1",
     "allure-commandline": "^2.43.0",
     "allure-playwright": "^3.10.2",
     "eslint": "^10.8.0",
