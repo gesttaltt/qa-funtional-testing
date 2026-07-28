@@ -21,8 +21,11 @@
   "keywords": [
     "qa",
     "playwright",
-    "e2e",
-    "testing"
+    "typescript",
+    "e2e-testing",
+    "page-object-model",
+    "accessibility-testing",
+    "data-driven-testing"
   ],
   "author": "Jonathan Verdun",
   "license": "MIT",
