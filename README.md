@@ -19,7 +19,7 @@ End-to-end functional test suite for [saucedemo.com](https://www.saucedemo.com),
 - **Checkout**: full purchase flow with cross-screen price integrity (inventory → cart → checkout summary must show the same price) and cart-clears-on-completion check; required-field validation (data-driven) plus a documented quirk where whitespace-only fields bypass validation; total price calculation, verified per-item against inventory, across different cart sizes (data-driven).
 - **Menu**: logout and reset app state.
 - **Special users**: known bugs for `problem_user` (broken image) and `error_user` (uncaught JS exception), tolerance for `performance_glitch_user`'s delay.
-- **Accessibility**: [axe-core](https://github.com/dequelabs/axe-core) scan on every screen (login through checkout-complete), failing only on new violations; a documented known issue for the inventory sort `<select>` missing an accessible name.
+- **Accessibility**: [axe-core](https://github.com/dequelabs/axe-core) scan on every screen (login through checkout-complete), failing only on new violations; a documented known issue for the inventory sort `<select>` missing an accessible name; a keyboard-only pass through the login form (tab order + submit with Enter), which a static axe scan can't verify.
 
 ## Structure
 
@@ -83,6 +83,8 @@ Since this suite runs against a live third-party site rather than an environment
 ## Accessibility
 
 `tests/accessibility.spec.ts` runs an [axe-core](https://github.com/dequelabs/axe-core) scan (via `@axe-core/playwright`) on every screen. SauceDemo has real, pre-existing violations we don't control (missing `<main>` landmark, no `<h1>`, content outside landmarks, and a critical one: the inventory sort dropdown has no accessible name) — these are excluded from the per-page checks (`KNOWN_RULES` in the spec) so the suite is red only for _new_ violations, not this baseline debt. The dropdown issue is still tracked, just as its own dedicated "known bug" test rather than failing the general scan — same pattern as the `problem_user`/`error_user` tests.
+
+Automated scans only catch markup-level issues; they can't tell you whether a form is actually usable without a mouse. A separate test drives the login form with `Tab`/`Enter` only (no `.fill()`/`.click()`) to verify tab order lands on username → password → submit, and that the button responds to `Enter`.
 
 ## Allure reports
 

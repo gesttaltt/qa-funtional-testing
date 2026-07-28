@@ -2,6 +2,7 @@ import { type Page } from '@playwright/test';
 import { AxeBuilder } from '@axe-core/playwright';
 import { test, expect } from '../fixtures/test-base';
 import { test as authedTest } from '../fixtures/authenticated-test';
+import { users } from '../fixtures/users';
 
 // Violaciones preexistentes de SauceDemo (verificado en vivo), fuera de nuestro control:
 // - landmark-one-main / page-has-heading-one / region: deuda de estructura de documento en
@@ -81,6 +82,31 @@ test.describe('Accesibilidad', () => {
       await expectNoNewViolations(page);
     }
   );
+});
+
+test.describe('Accesibilidad - navegación por teclado', () => {
+  test('el login se puede completar y enviar íntegramente con teclado', async ({
+    page,
+    loginPage,
+  }) => {
+    // el scan de axe-core detecta marcado, no orden de tabulación ni si el submit
+    // realmente funciona sin mouse; esto cubre esa parte del flujo.
+    await loginPage.goto();
+
+    await page.keyboard.press('Tab');
+    await expect(loginPage.usernameInput).toBeFocused();
+    await page.keyboard.type(users.standard.username);
+
+    await page.keyboard.press('Tab');
+    await expect(loginPage.passwordInput).toBeFocused();
+    await page.keyboard.type(users.standard.password);
+
+    await page.keyboard.press('Tab');
+    await expect(loginPage.loginButton).toBeFocused();
+
+    await page.keyboard.press('Enter');
+    await expect(page).toHaveURL(/inventory\.html/);
+  });
 });
 
 test.describe('Accesibilidad - bug conocido', () => {

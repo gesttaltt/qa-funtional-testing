@@ -26,6 +26,9 @@
   ],
   "author": "Jonathan Verdun",
   "license": "MIT",
+  "engines": {
+    "node": ">=20 <21"
+  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/gesttaltt/qa-funtional-testing.git"
