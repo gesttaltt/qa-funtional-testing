@@ -38,7 +38,7 @@ test.describe('Cart', () => {
     ]);
   });
 
-  test('permite quitar un producto del carrito', async ({ cartPage }) => {
+  test('permite quitar un producto del carrito', { tag: '@smoke' }, async ({ cartPage }) => {
     await cartPage.removeItem('Sauce Labs Backpack');
 
     await expect(cartPage.cartItems).toHaveCount(1);

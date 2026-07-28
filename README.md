@@ -20,6 +20,7 @@ End-to-end functional test suite for [saucedemo.com](https://www.saucedemo.com),
 - **Menu**: logout and reset app state.
 - **Special users**: known bugs for `problem_user` (broken image) and `error_user` (uncaught JS exception), tolerance for `performance_glitch_user`'s delay.
 - **Accessibility**: [axe-core](https://github.com/dequelabs/axe-core) scan on every screen (login through checkout-complete), failing only on new violations; a documented known issue for the inventory sort `<select>` missing an accessible name; a keyboard-only pass through the login form (tab order + submit with Enter), which a static axe scan can't verify.
+- **Mobile viewport**: the critical path (login → add to cart → view cart → checkout → logout) also runs on a `Mobile Chrome` (Pixel 5) project, tagged `@smoke` — see [Mobile testing](#mobile-testing).
 
 ## Structure
 
@@ -43,9 +44,11 @@ flowchart TB
     F --> G1["playwright test<br/>chromium"]
     F --> G2["playwright test<br/>firefox"]
     F --> G3["playwright test<br/>webkit"]
+    F --> G4["playwright test<br/>Mobile Chrome (@smoke only)"]
     G1 --> H["Playwright HTML +<br/>Allure report per browser"]
     G2 --> H
     G3 --> H
+    G4 --> H
     H -->|push to main| I["merge results →<br/>GitHub Pages"]
 ```
 
@@ -56,6 +59,12 @@ Specs never talk to the page directly: they call Page Object methods, which own 
 Repetitive cases (invalid login variants, checkout validation, cart combinations) live as JSON under `fixtures/data/` and are looped over inside each spec with a `for` to generate one independent test per case — so adding a new case just means editing the JSON, not touching test code.
 
 Data-driven cases are only added when they exercise genuinely different app behavior. An earlier version of this suite parametrized the full purchase flow across several "customer profiles" (different names, postal code formats) — dropped after verifying that SauceDemo's checkout never reflects that input anywhere in the UI, so the variants were tripling test count without adding coverage. The remaining checkout e2e test is a single, deeper case instead.
+
+## Mobile testing
+
+SauceDemo's layout is responsive, but nothing exercised it at a mobile viewport until the `Mobile Chrome` project (`devices['Pixel 5']`) was added to `playwright.config.ts`. Running the full 99-test desktop suite a second time under mobile emulation would only re-verify the same JS/DOM logic already covered three times over (chromium/firefox/webkit) — the only thing actually new is layout at a small viewport, so the data-driven validation batteries and the full accessibility scan aren't rerun there.
+
+Instead, the five tests that together cover the critical user journey — login, add to cart, view cart, checkout, logout — are tagged `{ tag: '@smoke' }`, and the `Mobile Chrome` project is scoped to that tag via `grep: /@smoke/` in the config. Same pattern used for the data-driven-vs-volume tradeoff above: coverage that exercises genuinely different behavior (layout), not coverage for its own sake.
 
 ## Usage
 
@@ -101,9 +110,9 @@ npm run allure:open       # open the last generated allure-report/
 Every push/PR to `main` runs on GitHub Actions (`.github/workflows/playwright.yml`) in three stages:
 
 1. **`checks`** — lint, format check, typecheck. Runs once, no browsers involved.
-2. **`test`** — a matrix job (`chromium` / `firefox` / `webkit`) that only starts once `checks` passes; each browser runs in its own parallel job, with Playwright's browser binaries cached (`actions/cache`, keyed by OS + browser + lockfile hash) so a cache hit skips the download and only installs OS-level dependencies. Each job publishes its own Playwright HTML report, Allure report, and raw Allure results as artifacts.
+2. **`test`** — a matrix job (`chromium` / `firefox` / `webkit` / `Mobile Chrome`) that only starts once `checks` passes; each project runs in its own parallel job, with Playwright's browser binaries cached (`actions/cache`, keyed by OS + underlying browser engine + lockfile hash — `Mobile Chrome` shares the `chromium` cache entry, since it's the same engine under emulation) so a cache hit skips the download and only installs OS-level dependencies. Each job publishes its own Playwright HTML report, Allure report, and raw Allure results as artifacts.
 3. **`deploy-report`** (pushes to `main` only) — downloads and merges the three browsers' Allure results, regenerates a single combined Allure report — carrying over trend history from the previously deployed site — and publishes it to GitHub Pages at https://gesttaltt.github.io/qa-funtional-testing/.
 
 A `concurrency` group cancels a run if a newer push lands on the same branch before it finishes.
 
-`main` requires the `checks`, `test (chromium)`, `test (firefox)`, `test (webkit)`, and `Analyze` (CodeQL) status checks to pass before a PR can be merged; force-pushes and deletions on `main` are blocked. `.github/workflows/codeql.yml` scans the codebase for JS/TS security issues on every push/PR plus a weekly schedule. Dependency updates come from Dependabot (`.github/dependabot.yml`, weekly for both npm and GitHub Actions) with security alerts enabled at the repo level — anything it proposes still has to pass the same checks as a human-authored PR.
+`main` requires the `checks`, `test (chromium)`, `test (firefox)`, `test (webkit)`, `test (Mobile Chrome)`, and `Analyze` (CodeQL) status checks to pass before a PR can be merged; force-pushes and deletions on `main` are blocked. `.github/workflows/codeql.yml` scans the codebase for JS/TS security issues on every push/PR plus a weekly schedule. Dependency updates come from Dependabot (`.github/dependabot.yml`, weekly for both npm and GitHub Actions) with security alerts enabled at the repo level — anything it proposes still has to pass the same checks as a human-authored PR.

@@ -22,11 +22,15 @@ test.describe('Inventory', () => {
     expect(pricesDesc).toEqual([...pricesAsc].sort((a, b) => b - a));
   });
 
-  test('agregar y quitar un producto actualiza el badge del carrito', async ({ inventoryPage }) => {
-    await inventoryPage.addToCart('Sauce Labs Backpack');
-    await expect(inventoryPage.cartBadge).toHaveText('1');
+  test(
+    'agregar y quitar un producto actualiza el badge del carrito',
+    { tag: '@smoke' },
+    async ({ inventoryPage }) => {
+      await inventoryPage.addToCart('Sauce Labs Backpack');
+      await expect(inventoryPage.cartBadge).toHaveText('1');
 
-    await inventoryPage.removeFromCart('Sauce Labs Backpack');
-    await expect(inventoryPage.cartBadge).toHaveCount(0);
-  });
+      await inventoryPage.removeFromCart('Sauce Labs Backpack');
+      await expect(inventoryPage.cartBadge).toHaveCount(0);
+    }
+  );
 });

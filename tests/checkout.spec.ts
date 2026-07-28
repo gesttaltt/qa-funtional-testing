@@ -5,46 +5,45 @@ import checkoutCarts from '../fixtures/data/checkout-carts.json';
 const toNumber = (text: string) => parseFloat(text.replace(/[^0-9.]/g, ''));
 
 test.describe('Checkout - flujo completo de compra', () => {
-  test('completa la compra preservando el precio del producto y vacía el carrito al volver', async ({
-    page,
-    inventoryPage,
-    cartPage,
-    checkoutPage,
-  }) => {
-    const inventoryPrice = await test.step('leer el precio del producto en inventory', async () =>
-      (await inventoryPage.priceOf('Sauce Labs Backpack').textContent()) ?? '');
+  test(
+    'completa la compra preservando el precio del producto y vacía el carrito al volver',
+    { tag: '@smoke' },
+    async ({ page, inventoryPage, cartPage, checkoutPage }) => {
+      const inventoryPrice = await test.step('leer el precio del producto en inventory', async () =>
+        (await inventoryPage.priceOf('Sauce Labs Backpack').textContent()) ?? '');
 
-    await test.step('agregar el producto y llegar a checkout step one', async () => {
-      await inventoryPage.addToCart('Sauce Labs Backpack');
-      await inventoryPage.goToCart();
-      await cartPage.checkout();
-      await expect(page).toHaveURL(/checkout-step-one\.html/);
-    });
+      await test.step('agregar el producto y llegar a checkout step one', async () => {
+        await inventoryPage.addToCart('Sauce Labs Backpack');
+        await inventoryPage.goToCart();
+        await cartPage.checkout();
+        await expect(page).toHaveURL(/checkout-step-one\.html/);
+      });
 
-    await test.step('completar la información de envío', async () => {
-      await checkoutPage.fillInfo('Jonathan', 'Verdun', '12345');
-      await expect(page).toHaveURL(/checkout-step-two\.html/);
-    });
+      await test.step('completar la información de envío', async () => {
+        await checkoutPage.fillInfo('Jonathan', 'Verdun', '12345');
+        await expect(page).toHaveURL(/checkout-step-two\.html/);
+      });
 
-    await test.step('verificar que el resumen preserva el precio visto en inventory', async () => {
-      // el precio mostrado en el resumen debe ser el mismo que el usuario vio en inventory,
-      // no un valor recalculado o desactualizado
-      await expect(checkoutPage.summaryItemNames).toHaveText(['Sauce Labs Backpack']);
-      await expect(checkoutPage.summaryItemPrices).toHaveText([inventoryPrice]);
-    });
+      await test.step('verificar que el resumen preserva el precio visto en inventory', async () => {
+        // el precio mostrado en el resumen debe ser el mismo que el usuario vio en inventory,
+        // no un valor recalculado o desactualizado
+        await expect(checkoutPage.summaryItemNames).toHaveText(['Sauce Labs Backpack']);
+        await expect(checkoutPage.summaryItemPrices).toHaveText([inventoryPrice]);
+      });
 
-    await test.step('finalizar la compra', async () => {
-      await checkoutPage.finish();
-      await expect(page).toHaveURL(/checkout-complete\.html/);
-      await expect(checkoutPage.completeHeader).toHaveText('Thank you for your order!');
-    });
+      await test.step('finalizar la compra', async () => {
+        await checkoutPage.finish();
+        await expect(page).toHaveURL(/checkout-complete\.html/);
+        await expect(checkoutPage.completeHeader).toHaveText('Thank you for your order!');
+      });
 
-    await test.step('volver a productos y verificar que el carrito quedó vacío', async () => {
-      await checkoutPage.backToProducts();
-      await expect(page).toHaveURL(/inventory\.html/);
-      await expect(inventoryPage.cartBadge).toHaveCount(0);
-    });
-  });
+      await test.step('volver a productos y verificar que el carrito quedó vacío', async () => {
+        await checkoutPage.backToProducts();
+        await expect(page).toHaveURL(/inventory\.html/);
+        await expect(inventoryPage.cartBadge).toHaveCount(0);
+      });
+    }
+  );
 });
 
 test.describe('Checkout - validación de datos requeridos', () => {

@@ -3,12 +3,16 @@ import { users } from '../fixtures/users';
 import loginCases from '../fixtures/data/login-cases.json';
 
 test.describe('Login', () => {
-  test('permite iniciar sesión con credenciales válidas', async ({ page, loginPage }) => {
-    await loginPage.goto();
-    await loginPage.login(users.standard.username, users.standard.password);
+  test(
+    'permite iniciar sesión con credenciales válidas',
+    { tag: '@smoke' },
+    async ({ page, loginPage }) => {
+      await loginPage.goto();
+      await loginPage.login(users.standard.username, users.standard.password);
 
-    await expect(page).toHaveURL(/inventory\.html/);
-  });
+      await expect(page).toHaveURL(/inventory\.html/);
+    }
+  );
 
   for (const testCase of loginCases) {
     test(`rechaza el login: ${testCase.name}`, async ({ loginPage }) => {
