@@ -40,12 +40,16 @@ flowchart TB
     C -->|drives| E(("saucedemo.com"))
 
     A -->|push / PR| F["CI: lint + format:check + typecheck"]
-    F --> G["playwright test<br/>chromium / firefox / webkit"]
-    G --> H["Playwright HTML +<br/>Allure report"]
-    H -->|push to main| I["GitHub Pages"]
+    F --> G1["playwright test<br/>chromium"]
+    F --> G2["playwright test<br/>firefox"]
+    F --> G3["playwright test<br/>webkit"]
+    G1 --> H["Playwright HTML +<br/>Allure report per browser"]
+    G2 --> H
+    G3 --> H
+    H -->|push to main| I["merge results →<br/>GitHub Pages"]
 ```
 
-Specs never talk to the page directly: they call Page Object methods, which own the locators. `fixtures/test-base.ts` wires the Page Objects into Playwright's `test`; `fixtures/authenticated-test.ts` extends it to auto-login as `standard_user` for specs that don't need to control credentials, cutting login boilerplate from every test in `inventory`, `cart`, `checkout`, `menu`, and most of `accessibility`. Every push runs quality gates before the browsers even install — a lint, format, or type error fails fast instead of burning CI minutes on a doomed test run.
+Specs never talk to the page directly: they call Page Object methods, which own the locators. `fixtures/test-base.ts` wires the Page Objects into Playwright's `test`; `fixtures/authenticated-test.ts` extends it to auto-login as `standard_user` for specs that don't need to control credentials, cutting login boilerplate from every test in `inventory`, `cart`, `checkout`, `menu`, and most of `accessibility`. Every push runs quality gates (`checks` job) before a single browser installs; only once those pass does the `test` job fan out into a parallel matrix, one job per browser, so a lint/format/type error fails fast instead of burning CI minutes on a doomed test run.
 
 ## Data-driven testing
 
@@ -92,6 +96,12 @@ npm run allure:open       # open the last generated allure-report/
 
 ## CI
 
-Every push/PR to `main` runs lint, format check, and typecheck, then the full suite on GitHub Actions (`.github/workflows/playwright.yml`), and publishes both the Playwright HTML report and the generated Allure report as artifacts. On pushes to `main`, a second job regenerates the Allure report — carrying over trend history from the previously deployed site — and publishes it to GitHub Pages at https://gesttaltt.github.io/qa-funtional-testing/. A `concurrency` group cancels a run if a newer push lands on the same branch before it finishes.
+Every push/PR to `main` runs on GitHub Actions (`.github/workflows/playwright.yml`) in three stages:
 
-`main` requires the `test` and `Analyze` (CodeQL) status checks to pass before a PR can be merged; force-pushes and deletions on `main` are blocked. `.github/workflows/codeql.yml` scans the codebase for JS/TS security issues on every push/PR plus a weekly schedule. Dependency updates come from Dependabot (`.github/dependabot.yml`, weekly for both npm and GitHub Actions) with security alerts enabled at the repo level — anything it proposes still has to pass the same checks as a human-authored PR.
+1. **`checks`** — lint, format check, typecheck. Runs once, no browsers involved.
+2. **`test`** — a matrix job (`chromium` / `firefox` / `webkit`) that only starts once `checks` passes; each browser runs in its own parallel job, with Playwright's browser binaries cached (`actions/cache`, keyed by OS + browser + lockfile hash) so a cache hit skips the download and only installs OS-level dependencies. Each job publishes its own Playwright HTML report, Allure report, and raw Allure results as artifacts.
+3. **`deploy-report`** (pushes to `main` only) — downloads and merges the three browsers' Allure results, regenerates a single combined Allure report — carrying over trend history from the previously deployed site — and publishes it to GitHub Pages at https://gesttaltt.github.io/qa-funtional-testing/.
+
+A `concurrency` group cancels a run if a newer push lands on the same branch before it finishes.
+
+`main` requires the `checks`, `test (chromium)`, `test (firefox)`, `test (webkit)`, and `Analyze` (CodeQL) status checks to pass before a PR can be merged; force-pushes and deletions on `main` are blocked. `.github/workflows/codeql.yml` scans the codebase for JS/TS security issues on every push/PR plus a weekly schedule. Dependency updates come from Dependabot (`.github/dependabot.yml`, weekly for both npm and GitHub Actions) with security alerts enabled at the repo level — anything it proposes still has to pass the same checks as a human-authored PR.

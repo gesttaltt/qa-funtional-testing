@@ -31,8 +31,10 @@ test.describe('Accesibilidad', () => {
   authedTest(
     'cart no tiene violaciones nuevas de accesibilidad',
     async ({ page, inventoryPage }) => {
-      await inventoryPage.addToCart('Sauce Labs Backpack');
-      await inventoryPage.goToCart();
+      await authedTest.step('agregar un producto y abrir el carrito', async () => {
+        await inventoryPage.addToCart('Sauce Labs Backpack');
+        await inventoryPage.goToCart();
+      });
 
       await expectNoNewViolations(page);
     }
@@ -41,9 +43,11 @@ test.describe('Accesibilidad', () => {
   authedTest(
     'checkout-step-one no tiene violaciones nuevas de accesibilidad',
     async ({ page, inventoryPage, cartPage }) => {
-      await inventoryPage.addToCart('Sauce Labs Backpack');
-      await inventoryPage.goToCart();
-      await cartPage.checkout();
+      await authedTest.step('llegar a checkout step one', async () => {
+        await inventoryPage.addToCart('Sauce Labs Backpack');
+        await inventoryPage.goToCart();
+        await cartPage.checkout();
+      });
 
       await expectNoNewViolations(page);
     }
@@ -52,10 +56,12 @@ test.describe('Accesibilidad', () => {
   authedTest(
     'checkout-step-two no tiene violaciones nuevas de accesibilidad',
     async ({ page, inventoryPage, cartPage, checkoutPage }) => {
-      await inventoryPage.addToCart('Sauce Labs Backpack');
-      await inventoryPage.goToCart();
-      await cartPage.checkout();
-      await checkoutPage.fillInfo('Jonathan', 'Verdun', '12345');
+      await authedTest.step('llegar a checkout step two', async () => {
+        await inventoryPage.addToCart('Sauce Labs Backpack');
+        await inventoryPage.goToCart();
+        await cartPage.checkout();
+        await checkoutPage.fillInfo('Jonathan', 'Verdun', '12345');
+      });
 
       await expectNoNewViolations(page);
     }
@@ -64,11 +70,13 @@ test.describe('Accesibilidad', () => {
   authedTest(
     'checkout-complete no tiene violaciones nuevas de accesibilidad',
     async ({ page, inventoryPage, cartPage, checkoutPage }) => {
-      await inventoryPage.addToCart('Sauce Labs Backpack');
-      await inventoryPage.goToCart();
-      await cartPage.checkout();
-      await checkoutPage.fillInfo('Jonathan', 'Verdun', '12345');
-      await checkoutPage.finish();
+      await authedTest.step('completar la compra', async () => {
+        await inventoryPage.addToCart('Sauce Labs Backpack');
+        await inventoryPage.goToCart();
+        await cartPage.checkout();
+        await checkoutPage.fillInfo('Jonathan', 'Verdun', '12345');
+        await checkoutPage.finish();
+      });
 
       await expectNoNewViolations(page);
     }

@@ -36,12 +36,17 @@ test.describe('Usuarios con comportamiento especial', () => {
     const pageErrors: Error[] = [];
     page.on('pageerror', (error) => pageErrors.push(error));
 
-    await loginPage.goto();
-    await loginPage.login(users.error.username, users.error.password);
-    await inventoryPage.addToCart('Sauce Labs Backpack');
-    await inventoryPage.goToCart();
-    await cartPage.checkout();
-    await checkoutPage.fillInfo('Jonathan', 'Verdun', '12345');
+    await test.step('iniciar sesión como error_user', async () => {
+      await loginPage.goto();
+      await loginPage.login(users.error.username, users.error.password);
+    });
+
+    await test.step('llegar a checkout y completar la información', async () => {
+      await inventoryPage.addToCart('Sauce Labs Backpack');
+      await inventoryPage.goToCart();
+      await cartPage.checkout();
+      await checkoutPage.fillInfo('Jonathan', 'Verdun', '12345');
+    });
 
     expect(pageErrors.length).toBeGreaterThan(0);
   });

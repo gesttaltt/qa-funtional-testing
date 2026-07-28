@@ -4,17 +4,21 @@ test.describe('Cart', () => {
   let inventoryPrices: Record<string, string>;
 
   test.beforeEach(async ({ page, inventoryPage }) => {
-    const backpackPrice = await inventoryPage.priceOf('Sauce Labs Backpack').textContent();
-    const bikeLightPrice = await inventoryPage.priceOf('Sauce Labs Bike Light').textContent();
-    inventoryPrices = {
-      'Sauce Labs Backpack': backpackPrice ?? '',
-      'Sauce Labs Bike Light': bikeLightPrice ?? '',
-    };
+    await test.step('registrar los precios de inventory', async () => {
+      const backpackPrice = await inventoryPage.priceOf('Sauce Labs Backpack').textContent();
+      const bikeLightPrice = await inventoryPage.priceOf('Sauce Labs Bike Light').textContent();
+      inventoryPrices = {
+        'Sauce Labs Backpack': backpackPrice ?? '',
+        'Sauce Labs Bike Light': bikeLightPrice ?? '',
+      };
+    });
 
-    await inventoryPage.addToCart('Sauce Labs Backpack');
-    await inventoryPage.addToCart('Sauce Labs Bike Light');
-    await inventoryPage.goToCart();
-    await expect(page).toHaveURL(/cart\.html/);
+    await test.step('agregar los productos y abrir el carrito', async () => {
+      await inventoryPage.addToCart('Sauce Labs Backpack');
+      await inventoryPage.addToCart('Sauce Labs Bike Light');
+      await inventoryPage.goToCart();
+      await expect(page).toHaveURL(/cart\.html/);
+    });
   });
 
   test('muestra los productos agregados con el mismo precio que en inventory', async ({

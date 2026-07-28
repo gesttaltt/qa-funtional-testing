@@ -11,37 +11,50 @@ test.describe('Checkout - flujo completo de compra', () => {
     cartPage,
     checkoutPage,
   }) => {
-    const inventoryPrice = await inventoryPage.priceOf('Sauce Labs Backpack').textContent();
+    const inventoryPrice = await test.step('leer el precio del producto en inventory', async () =>
+      (await inventoryPage.priceOf('Sauce Labs Backpack').textContent()) ?? '');
 
-    await inventoryPage.addToCart('Sauce Labs Backpack');
-    await inventoryPage.goToCart();
-    await cartPage.checkout();
-    await expect(page).toHaveURL(/checkout-step-one\.html/);
+    await test.step('agregar el producto y llegar a checkout step one', async () => {
+      await inventoryPage.addToCart('Sauce Labs Backpack');
+      await inventoryPage.goToCart();
+      await cartPage.checkout();
+      await expect(page).toHaveURL(/checkout-step-one\.html/);
+    });
 
-    await checkoutPage.fillInfo('Jonathan', 'Verdun', '12345');
-    await expect(page).toHaveURL(/checkout-step-two\.html/);
+    await test.step('completar la información de envío', async () => {
+      await checkoutPage.fillInfo('Jonathan', 'Verdun', '12345');
+      await expect(page).toHaveURL(/checkout-step-two\.html/);
+    });
 
-    // el precio mostrado en el resumen debe ser el mismo que el usuario vio en inventory,
-    // no un valor recalculado o desactualizado
-    await expect(checkoutPage.summaryItemNames).toHaveText(['Sauce Labs Backpack']);
-    await expect(checkoutPage.summaryItemPrices).toHaveText([inventoryPrice ?? '']);
+    await test.step('verificar que el resumen preserva el precio visto en inventory', async () => {
+      // el precio mostrado en el resumen debe ser el mismo que el usuario vio en inventory,
+      // no un valor recalculado o desactualizado
+      await expect(checkoutPage.summaryItemNames).toHaveText(['Sauce Labs Backpack']);
+      await expect(checkoutPage.summaryItemPrices).toHaveText([inventoryPrice]);
+    });
 
-    await checkoutPage.finish();
-    await expect(page).toHaveURL(/checkout-complete\.html/);
-    await expect(checkoutPage.completeHeader).toHaveText('Thank you for your order!');
+    await test.step('finalizar la compra', async () => {
+      await checkoutPage.finish();
+      await expect(page).toHaveURL(/checkout-complete\.html/);
+      await expect(checkoutPage.completeHeader).toHaveText('Thank you for your order!');
+    });
 
-    await checkoutPage.backToProducts();
-    await expect(page).toHaveURL(/inventory\.html/);
-    await expect(inventoryPage.cartBadge).toHaveCount(0);
+    await test.step('volver a productos y verificar que el carrito quedó vacío', async () => {
+      await checkoutPage.backToProducts();
+      await expect(page).toHaveURL(/inventory\.html/);
+      await expect(inventoryPage.cartBadge).toHaveCount(0);
+    });
   });
 });
 
 test.describe('Checkout - validación de datos requeridos', () => {
   test.beforeEach(async ({ page, inventoryPage, cartPage }) => {
-    await inventoryPage.addToCart('Sauce Labs Backpack');
-    await inventoryPage.goToCart();
-    await cartPage.checkout();
-    await expect(page).toHaveURL(/checkout-step-one\.html/);
+    await test.step('llegar a checkout step one con un producto en el carrito', async () => {
+      await inventoryPage.addToCart('Sauce Labs Backpack');
+      await inventoryPage.goToCart();
+      await cartPage.checkout();
+      await expect(page).toHaveURL(/checkout-step-one\.html/);
+    });
   });
 
   for (const testCase of checkoutValidationCases) {
@@ -74,32 +87,43 @@ test.describe('Checkout - cálculo de precio total', () => {
       checkoutPage,
     }) => {
       const inventoryPrices: Record<string, number> = {};
-      for (const product of cart.products) {
-        const priceText = await inventoryPage.priceOf(product).textContent();
-        inventoryPrices[product] = toNumber(priceText ?? '');
-        await inventoryPage.addToCart(product);
-      }
 
-      await inventoryPage.goToCart();
-      await cartPage.checkout();
-      await checkoutPage.fillInfo('Jonathan', 'Verdun', '12345');
-      await expect(page).toHaveURL(/checkout-step-two\.html/);
-
-      // cada precio del resumen debe coincidir con el que el producto tenía en inventory,
-      // no solo ser matemáticamente consistente consigo mismo
-      const summaryNames = await checkoutPage.summaryItemNames.allTextContents();
-      const summaryPrices = (await checkoutPage.summaryItemPrices.allTextContents()).map(toNumber);
-      summaryNames.forEach((name, index) => {
-        expect(summaryPrices[index]).toBeCloseTo(inventoryPrices[name], 2);
+      await test.step('agregar los productos al carrito y registrar sus precios en inventory', async () => {
+        for (const product of cart.products) {
+          const priceText = await inventoryPage.priceOf(product).textContent();
+          inventoryPrices[product] = toNumber(priceText ?? '');
+          await inventoryPage.addToCart(product);
+        }
       });
 
-      const expectedSubtotal = summaryPrices.reduce((sum, price) => sum + price, 0);
-      const subtotal = toNumber((await checkoutPage.subtotalLabel.textContent()) ?? '');
-      const tax = toNumber((await checkoutPage.taxLabel.textContent()) ?? '');
-      const total = toNumber((await checkoutPage.totalLabel.textContent()) ?? '');
+      await test.step('llegar al resumen de checkout', async () => {
+        await inventoryPage.goToCart();
+        await cartPage.checkout();
+        await checkoutPage.fillInfo('Jonathan', 'Verdun', '12345');
+        await expect(page).toHaveURL(/checkout-step-two\.html/);
+      });
 
-      expect(subtotal).toBeCloseTo(expectedSubtotal, 2);
-      expect(total).toBeCloseTo(subtotal + tax, 2);
+      const summaryPrices =
+        await test.step('verificar que cada precio del resumen coincide con el de inventory', async () => {
+          // cada precio del resumen debe coincidir con el que el producto tenía en inventory,
+          // no solo ser matemáticamente consistente consigo mismo
+          const summaryNames = await checkoutPage.summaryItemNames.allTextContents();
+          const prices = (await checkoutPage.summaryItemPrices.allTextContents()).map(toNumber);
+          summaryNames.forEach((name, index) => {
+            expect(prices[index]).toBeCloseTo(inventoryPrices[name], 2);
+          });
+          return prices;
+        });
+
+      await test.step('verificar subtotal, impuesto y total', async () => {
+        const expectedSubtotal = summaryPrices.reduce((sum, price) => sum + price, 0);
+        const subtotal = toNumber((await checkoutPage.subtotalLabel.textContent()) ?? '');
+        const tax = toNumber((await checkoutPage.taxLabel.textContent()) ?? '');
+        const total = toNumber((await checkoutPage.totalLabel.textContent()) ?? '');
+
+        expect(subtotal).toBeCloseTo(expectedSubtotal, 2);
+        expect(total).toBeCloseTo(subtotal + tax, 2);
+      });
     });
   }
 });
