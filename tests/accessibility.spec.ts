@@ -92,6 +92,11 @@ test.describe('Accesibilidad - navegación por teclado', () => {
     // el scan de axe-core detecta marcado, no orden de tabulación ni si el submit
     // realmente funciona sin mouse; esto cubre esa parte del flujo.
     await loginPage.goto();
+    // el primer Tab justo después del goto() puede dispararse antes de que el
+    // documento asiente foco (visto flaky en CI, no reproducido en local); esperar
+    // a que el input esté realmente visible evita esa carrera sin dejar de ser
+    // 100% teclado.
+    await expect(loginPage.usernameInput).toBeVisible();
 
     await page.keyboard.press('Tab');
     await expect(loginPage.usernameInput).toBeFocused();
