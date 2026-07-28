@@ -24,6 +24,7 @@ export default defineConfig([
       'node_modules/',
       'playwright-report/',
       'test-results/',
+      'blob-report/',
       'playwright/.cache/',
       'allure-results/',
       'allure-report/',
