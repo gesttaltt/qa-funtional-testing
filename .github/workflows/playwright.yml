@@ -64,7 +64,7 @@ jobs:
         run: npm ci
       - name: Cache Playwright browser binaries
         id: playwright-cache
-        uses: actions/cache@v4
+        uses: actions/cache@v6
         with:
           path: ~/.cache/ms-playwright
           key: playwright-browsers-${{ runner.os }}-${{ matrix.browser }}-${{ hashFiles('package-lock.json') }}
